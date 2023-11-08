@@ -1,4 +1,3 @@
-
 def get_employee_name():
   return input("Enter employee name: ")
 
