@@ -1,3 +1,12 @@
+from datetime import datetime
+
+
+def get_date_range():
+  from_date = input("Enter the 'From' date (mm/dd/yyyy): ")
+  to_date = input("Enter the 'To' date (mm/dd/yyyy): ")
+  return from_date, to_date
+
+
 def get_employee_name():
   return input("Enter employee name: ")
 
@@ -21,36 +30,52 @@ def calculate_pay(hours, rate, tax_rate):
   return gross_pay, income_tax, net_pay
 
 
-def display_employee_info(name, hours, rate, gross_pay, tax_rate, income_tax,
-                          net_pay):
-  print("Employee Name: ", name)
-  print("Total Hours: ", hours)
-  print("Hourly Rate: ", rate)
-  print("Gross Pay: ", gross_pay)
-  print("Income Tax Rate: ", tax_rate)
-  print("Income Tax: ", income_tax)
-  print("Net Pay: ", net_pay)
+def create_employee_record(from_date, to_date, name, hours, rate, tax_rate):
+  gross_pay, income_tax, net_pay = calculate_pay(hours, rate, tax_rate)
+  return [
+      from_date, to_date, name, hours, rate, gross_pay, tax_rate, income_tax,
+      net_pay
+  ]
 
 
-def display_summary(total_employees, total_hours, total_gross_pay, total_tax,
-                    total_net_pay):
-  print("Total Employees: ", total_employees)
-  print("Total Hours: ", total_hours)
-  print("Total Gross Pay: ", total_gross_pay)
-  print("Total Tax: ", total_tax)
-  print("Total Net Pay: ", total_net_pay)
+def calculate_totals(records):
+  totals = {
+      "total_employees": len(records),
+      "total_hours": sum(record[3] for record in records),
+      "total_gross_pay": sum(record[5] for record in records),
+      "total_tax": sum(record[7] for record in records),
+      "total_net_pay": sum(record[8] for record in records)
+  }
+  return totals
+
+
+def display_employee_info(record):
+  print("\nEmployee Information")
+  print("From Date: ", record[0])
+  print("To Date: ", record[1])
+  print("Employee Name: ", record[2])
+  print("Total Hours: ", record[3])
+  print("Hourly Rate: ", record[4])
+  print("Gross Pay: ", record[5])
+  print("Income Tax Rate: ", record[6])
+  print("Income Tax: ", record[7])
+  print("Net Pay: ", record[8])
+
+
+def display_summary(totals):
+  print("\nSummary")
+  print("Total Employees: ", totals["total_employees"])
+  print("Total Hours: ", totals["total_hours"])
+  print("Total Gross Pay: ", totals["total_gross_pay"])
+  print("Total Tax: ", totals["total_tax"])
+  print("Total Net Pay: ", totals["total_net_pay"])
 
 
 def main():
-  # Initialize variables
-  total_employees = 0
-  total_hours = 0
-  total_gross_pay = 0
-  total_tax = 0
-  total_net_pay = 0
+  records = []
 
   while True:
-    # Get employee details
+    from_date, to_date = get_date_range()
     name = get_employee_name()
     if name.lower() == "end":
       break
@@ -59,23 +84,13 @@ def main():
     rate = get_hourly_rate()
     tax_rate = get_tax_rate()
 
-    # Calculate pay
-    gross_pay, income_tax, net_pay = calculate_pay(hours, rate, tax_rate)
+    record = create_employee_record(from_date, to_date, name, hours, rate,
+                                    tax_rate)
+    records.append(record)
+    display_employee_info(record)
 
-    # Update totals
-    total_employees += 1
-    total_hours += hours
-    total_gross_pay += gross_pay
-    total_tax += income_tax
-    total_net_pay += net_pay
-
-    # Display employee info
-    display_employee_info(name, hours, rate, gross_pay, tax_rate, income_tax,
-                          net_pay)
-
-  # Display summary
-  display_summary(total_employees, total_hours, total_gross_pay, total_tax,
-                  total_net_pay)
+  totals = calculate_totals(records)
+  display_summary(totals)
 
 
 if __name__ == "__main__":
